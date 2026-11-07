@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Login | LPU Campus Booking{% endblock %}
+{% block show_footer %}{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-container">
+        <div class="auth-logo">
+            <div class="logo-circle">LPU</div>
+            <h1 style="font-family:'Poppins',sans-serif;font-weight:800;color:white;font-size:1.2rem;margin-bottom:0.2rem">Campus Resource Portal</h1>
+            <p style="color:rgba(255,255,255,0.4);font-size:0.8rem;margin:0">Lovely Professional University</p>
+        </div>
+
+        <!-- Login Type Tabs -->
+        <div style="display:flex;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:4px;margin-bottom:1.5rem">
+            <a href="{% url 'login' %}" style="flex:1;text-align:center;padding:0.6rem;border-radius:10px;background:rgba(200,16,46,0.2);border:1px solid rgba(200,16,46,0.3);color:white;text-decoration:none;font-size:0.85rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:5px">
+                <i class="fas fa-graduation-cap"></i> Student / Admin Login
+            </a>
+        </div>
+
+        <div class="auth-card zoom-in">
+            <h2 class="auth-title">Welcome Back 👋</h2>
+            <p class="auth-subtitle">Sign in to book campus resources</p>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label-custom">Username</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                    <div style="color:#f87171;font-size:0.8rem;margin-top:0.3rem">{{ form.username.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                <div class="mb-4">
+                    <label class="form-label-custom">Password</label>
+                    <div class="position-relative">
+                        {{ form.password }}
+                        <button type="button" onclick="togglePassword(this)" style="position:absolute;right:0.9rem;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    {% if form.password.errors %}
+                    <div style="color:#f87171;font-size:0.8rem;margin-top:0.3rem">{{ form.password.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                {% if form.non_field_errors %}
+                <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:0.75rem 1rem;color:#f87171;font-size:0.85rem;margin-bottom:1rem;display:flex;align-items:center;gap:8px">
+                    <i class="fas fa-exclamation-circle"></i> {{ form.non_field_errors.0 }}
+                </div>
+                {% endif %}
+
+                <button type="submit" class="btn-primary-custom w-100 ripple" style="justify-content:center;font-size:1rem;padding:0.85rem">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+            </form>
+
+            <div style="text-align:center;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,0.08)">
+                <p style="color:rgba(255,255,255,0.4);font-size:0.85rem;margin-bottom:0.75rem">Don't have an account?</p>
+                <div class="d-flex gap-2 justify-content-center">
+                    <a href="{% url 'student_register' %}" class="btn-outline-custom" style="font-size:0.85rem;padding:0.5rem 1.2rem">
+                        <i class="fas fa-user-graduate"></i> Student Register
+                    </a>
+                    <a href="{% url 'admin_register' %}" class="btn-outline-custom" style="font-size:0.85rem;padding:0.5rem 1.2rem">
+                        <i class="fas fa-shield-alt"></i> Admin Register
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Demo credentials info -->
+        <div style="margin-top:1rem;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.15);border-radius:10px;padding:0.8rem 1rem;text-align:center">
+            <p style="color:rgba(255,255,255,0.4);font-size:0.75rem;margin:0">
+                <i class="fas fa-info-circle" style="color:#60a5fa;margin-right:5px"></i>
+                Admin code for registration: <strong style="color:#60a5fa">LPU-ADMIN-2024</strong>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function togglePassword(btn) {
+    const input = btn.previousElementSibling;
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'fas fa-eye-slash';
+    } else {
+        input.type = 'password';
+        icon.className = 'fas fa-eye';
+    }
+}
+
+// Style the form inputs
+document.querySelectorAll('.auth-card input').forEach(el => {
+    el.style.cssText = 'background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;color:white;padding:0.7rem 1rem;width:100%;font-size:0.9rem;transition:all 0.3s;outline:none';
+    el.addEventListener('focus', () => {
+        el.style.border = '1.5px solid rgba(200,16,46,0.6)';
+        el.style.boxShadow = '0 0 0 4px rgba(200,16,46,0.12)';
+    });
+    el.addEventListener('blur', () => {
+        el.style.border = '1.5px solid rgba(255,255,255,0.1)';
+        el.style.boxShadow = 'none';
+    });
+});
+</script>
+{% endblock %}

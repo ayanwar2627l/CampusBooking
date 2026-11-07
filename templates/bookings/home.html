@@ -1,0 +1,352 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home | LPU Campus Booking Platform{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block content %}
+
+<!-- ── Hero Section ── -->
+<section class="hero-section">
+    <div class="container position-relative">
+        <div class="row align-items-center min-vh-100 py-5">
+            <div class="col-lg-6">
+                <div class="hero-badge">
+                    <span class="pulse-dot"></span>
+                    LPU Campus Resource Portal
+                </div>
+                <h1 class="hero-title">
+                    Book Campus<br>
+                    <span class="highlight">Labs & Facilities</span><br>
+                    Seamlessly
+                </h1>
+                <p class="hero-subtitle">
+                    Reserve computer labs, Mac labs, electronics labs, seminar halls, auditorium, 
+                    and DSW rooms for your academic and extracurricular activities at LPU.
+                </p>
+                <div class="hero-actions">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'facility_list' %}" class="btn-primary-custom ripple">
+                            <i class="fas fa-search"></i> Browse Facilities
+                        </a>
+                        <a href="{% url 'dashboard' %}" class="btn-outline-custom">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    {% else %}
+                        <a href="{% url 'student_register' %}" class="btn-primary-custom ripple">
+                            <i class="fas fa-user-plus"></i> Get Started
+                        </a>
+                        <a href="{% url 'login' %}" class="btn-outline-custom">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                    {% endif %}
+                </div>
+
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <span class="stat-num count-up" data-count="{{ total_facilities }}">{{ total_facilities }}</span>
+                        <span class="stat-label">Facilities</span>
+                    </div>
+                    <div class="hero-stat" style="border-left:1px solid rgba(255,255,255,0.1);padding-left:2rem">
+                        <span class="stat-num count-up" data-count="{{ total_bookings }}">{{ total_bookings }}</span>
+                        <span class="stat-label">Bookings Done</span>
+                    </div>
+                    <div class="hero-stat" style="border-left:1px solid rgba(255,255,255,0.1);padding-left:2rem">
+                        <span class="stat-num">24/7</span>
+                        <span class="stat-label">Support</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Floating Cards Visual -->
+            <div class="col-lg-6 d-none d-lg-block">
+                <div class="hero-visual">
+                    <div class="floating-card card-1 zoom-hover">
+                        <span class="card-icon">🖥️</span>
+                        <div class="card-title">Computer Labs</div>
+                        <div class="card-sub">50+ Workstations</div>
+                        <div class="progress-custom mt-2">
+                            <div class="progress-fill" style="width:75%"></div>
+                        </div>
+                    </div>
+                    <div class="floating-card card-2 zoom-hover">
+                        <span class="card-icon">🍎</span>
+                        <div class="card-title">Mac Labs</div>
+                        <div class="card-sub">Apple M-Series</div>
+                        <div class="mt-2 d-flex gap-1">
+                            <span style="width:8px;height:8px;background:#22c55e;border-radius:50%;display:inline-block"></span>
+                            <span style="font-size:0.7rem;color:rgba(255,255,255,0.5)">Available Now</span>
+                        </div>
+                    </div>
+                    <div class="floating-card card-3 zoom-hover">
+                        <span class="card-icon">🎭</span>
+                        <div class="card-title">Auditorium</div>
+                        <div class="card-sub">2000+ Seating</div>
+                        <div class="d-flex gap-1 mt-1">
+                            {% for i in "12345" %}
+                            <div style="width:6px;height:20px;background:rgba(200,16,46,0.{{ forloop.counter }}0);border-radius:3px;"></div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="floating-card card-4 zoom-hover">
+                        <span class="card-icon">⚡</span>
+                        <div class="card-title">Electronics Lab</div>
+                        <div class="card-sub">VLSI & Embedded</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div style="position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);animation:float 2s infinite">
+        <i class="fas fa-chevron-down" style="color:rgba(255,255,255,0.3);font-size:1.5rem"></i>
+    </div>
+</section>
+
+<!-- ── Facility Type Cards ── -->
+<section class="section section-dark">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-badge">Our Facilities</span>
+            <h2 class="section-title text-white">World-Class Campus<br><span class="gradient-text">Resources</span></h2>
+            <p class="section-subtitle text-white-50">
+                State-of-the-art facilities designed to support your academic excellence and campus life at LPU
+            </p>
+        </div>
+
+        <div class="row g-4">
+            {% for ftype, flabel in facility_types.items %}
+            <div class="col-lg-4 col-md-6 reveal">
+                <a href="{% url 'facility_list' %}?type={{ ftype }}" style="text-decoration:none">
+                    <div class="facility-card" style="height:100%">
+                        <div class="facility-card-img-placeholder">
+                            {% if 'Computer' in flabel %}🖥️
+                            {% elif 'Mac' in flabel %}🍎
+                            {% elif 'Electronics' in flabel %}⚡
+                            {% elif 'Seminar' in flabel %}📣
+                            {% elif 'Auditorium' in flabel %}🎭
+                            {% elif 'DSW' in flabel %}🏛️
+                            {% elif 'Conference' in flabel %}👥
+                            {% else %}🏢
+                            {% endif %}
+                        </div>
+                        <div class="facility-card-body">
+                            <div class="facility-type-badge">
+                                <i class="fas fa-circle" style="font-size:0.4rem"></i>
+                                {{ flabel }}
+                            </div>
+                            <h3 class="facility-card-title">{{ flabel }}</h3>
+                            <p style="color:rgba(255,255,255,0.5);font-size:0.85rem;margin-bottom:1rem">
+                                Book this facility for your academic or club activities
+                            </p>
+                            <span class="btn-primary-custom" style="font-size:0.85rem;padding:0.5rem 1.2rem">
+                                View Available <i class="fas fa-arrow-right"></i>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <!-- Default facility types when none exist in DB -->
+            {% for item in default_facility_types %}
+            <div class="col-lg-4 col-md-6 reveal">
+                <div class="facility-card">
+                    <div class="facility-card-img-placeholder">🏢</div>
+                    <div class="facility-card-body">
+                        <div class="facility-type-badge">Facility</div>
+                        <h3 class="facility-card-title">{{ item }}</h3>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ── Stats Section ── -->
+<section class="section" style="background:linear-gradient(135deg, rgba(200,16,46,0.08) 0%, transparent 50%), var(--secondary-dark)">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-lg-3 col-6 reveal animate-in-delay-1">
+                <div class="stat-card">
+                    <div class="stat-icon">🏢</div>
+                    <div class="stat-value count-up" data-count="{{ total_facilities }}">{{ total_facilities }}</div>
+                    <div class="stat-label">Campus Facilities</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6 reveal animate-in-delay-2">
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-value count-up" data-count="{{ total_bookings }}">{{ total_bookings }}</div>
+                    <div class="stat-label">Successful Bookings</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6 reveal animate-in-delay-3">
+                <div class="stat-card">
+                    <div class="stat-icon">🎓</div>
+                    <div class="stat-value">30K+</div>
+                    <div class="stat-label">Students Served</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-6 reveal animate-in-delay-4">
+                <div class="stat-card">
+                    <div class="stat-icon">⏱️</div>
+                    <div class="stat-value">24/7</div>
+                    <div class="stat-label">Online Booking</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── How It Works ── -->
+<section class="section section-dark">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-badge">Process</span>
+            <h2 class="section-title text-white">How It <span class="gradient-text">Works</span></h2>
+        </div>
+        <div class="row g-4">
+            {% for step in how_it_works_steps %}
+            <div class="col-lg reveal" style="text-align:center">
+                <div style="width:60px;height:60px;background:linear-gradient(135deg,rgba(200,16,46,0.2),rgba(212,175,55,0.1));border:2px solid rgba(200,16,46,0.3);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;font-weight:800;font-size:1.3rem;color:#c8102e;margin-bottom:1.2rem;">{{ forloop.counter }}</div>
+                <h5 style="font-family:'Poppins',sans-serif;font-weight:700;color:white;margin-bottom:0.5rem">{{ step }}</h5>
+                <p style="font-size:0.82rem;color:rgba(255,255,255,0.4)">
+                    {% if forloop.counter == 1 %}Create your student account and get verified by admin
+                    {% elif forloop.counter == 2 %}Explore available labs, halls, and rooms
+                    {% elif forloop.counter == 3 %}Choose date, time, and submit your request
+                    {% elif forloop.counter == 4 %}Attach required proof and undertaking documents
+                    {% else %}Receive email confirmation upon admin approval
+                    {% endif %}
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ── Announcements ── -->
+{% if announcements %}
+<section class="section" style="background:var(--secondary)">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="text-center mb-4">
+                    <span class="section-badge">DSW Updates</span>
+                    <h2 class="section-title text-white">Announcements</h2>
+                </div>
+                {% for ann in announcements %}
+                <div class="announcement-card reveal">
+                    <div class="ann-title">
+                        <i class="fas fa-bullhorn me-2" style="color:#c8102e"></i>{{ ann.title }}
+                    </div>
+                    <div class="ann-text">{{ ann.content }}</div>
+                    <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:0.5rem">
+                        {{ ann.created_at|date:"d M Y" }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ── Recent Facilities ── -->
+<section class="section section-dark">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <span class="section-badge">Available Now</span>
+                <h2 class="section-title text-white mb-0">Featured Facilities</h2>
+            </div>
+            <a href="{% url 'facility_list' %}" class="btn-outline-custom">
+                View All <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="row g-4">
+            {% for facility in facilities %}
+            <div class="col-lg-4 col-md-6 reveal">
+                <div class="facility-card zoom-hover">
+                    <div class="facility-card-img-wrapper">
+                        {% if facility.image %}
+                            <img src="{{ facility.image.url }}" alt="{{ facility.name }}" class="facility-card-img">
+                        {% else %}
+                            <div class="facility-card-img-placeholder">
+                                {% if facility.facility_type == 'computer_lab' %}🖥️
+                                {% elif facility.facility_type == 'mac_lab' %}🍎
+                                {% elif facility.facility_type == 'electronics_lab' %}⚡
+                                {% elif facility.facility_type == 'seminar_hall' %}📣
+                                {% elif facility.facility_type == 'auditorium' %}🎭
+                                {% elif facility.facility_type == 'dsw_room' %}🏛️
+                                {% else %}🏢{% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="facility-card-body">
+                        <div class="facility-type-badge">
+                            <i class="fas fa-{{ facility.facility_type_icon }}"></i>
+                            {{ facility.get_facility_type_display }}
+                        </div>
+                        <h3 class="facility-card-title">{{ facility.name }}</h3>
+                        <div class="facility-meta">
+                            <span class="facility-meta-item"><i class="fas fa-map-marker-alt"></i> {{ facility.block }}</span>
+                            <span class="facility-meta-item"><i class="fas fa-users"></i> {{ facility.capacity }} seats</span>
+                        </div>
+                        {% if facility.get_amenities_list %}
+                        <div class="facility-amenity-pills">
+                            {% for amenity in facility.get_amenities_list|slice:":3" %}
+                            <span class="amenity-pill">{{ amenity }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'facility_detail' facility.pk %}" class="btn-primary-custom" style="font-size:0.85rem;padding:0.5rem 1.2rem;width:100%;justify-content:center">
+                            <i class="fas fa-calendar-plus"></i> Book Now
+                        </a>
+                        {% else %}
+                        <a href="{% url 'login' %}" class="btn-primary-custom" style="font-size:0.85rem;padding:0.5rem 1.2rem;width:100%;justify-content:center">
+                            <i class="fas fa-sign-in-alt"></i> Login to Book
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-building" style="font-size:3rem;color:rgba(255,255,255,0.1);margin-bottom:1rem;display:block"></i>
+                <p style="color:rgba(255,255,255,0.4)">No facilities added yet. Admin can add facilities from the dashboard.</p>
+                {% if user.is_admin_user %}
+                <a href="{% url 'add_facility' %}" class="btn-primary-custom mt-2">
+                    <i class="fas fa-plus"></i> Add First Facility
+                </a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ── CTA Section ── -->
+{% if not user.is_authenticated %}
+<section class="section" style="background:linear-gradient(135deg, var(--primary-dark), rgba(30,10,20,0.98))">
+    <div class="container text-center">
+        <h2 class="section-title text-white mb-3">Ready to Book a Facility?</h2>
+        <p class="section-subtitle text-white-50">
+            Join thousands of LPU students who use our platform to book campus resources seamlessly.
+        </p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{% url 'student_register' %}" class="btn-gold">
+                <i class="fas fa-user-graduate"></i> Register as Student
+            </a>
+            <a href="{% url 'admin_register' %}" class="btn-outline-custom">
+                <i class="fas fa-shield-alt"></i> Admin Login
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}

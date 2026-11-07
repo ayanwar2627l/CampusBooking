@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Delete Facility | LPU Campus Booking{% endblock %}
+
+{% block content %}
+<div style="background:var(--secondary-dark);min-height:100vh;padding-top:4rem">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5">
+                <div class="content-card text-center" style="padding:2.5rem">
+                    <i class="fas fa-trash-alt" style="font-size:3rem;color:#ef4444;margin-bottom:1.5rem;display:block"></i>
+                    <h4 style="font-family:'Poppins',sans-serif;font-weight:700;margin-bottom:0.75rem">Delete Facility</h4>
+                    <p style="color:rgba(255,255,255,0.5);font-size:0.9rem;margin-bottom:2rem">
+                        Are you sure you want to delete
+                        <strong style="color:white">{{ facility.name }}</strong>?
+                        <br>
+                        <span style="font-size:0.82rem;color:rgba(239,68,68,0.7)">
+                            This will also delete all associated bookings and cannot be undone.
+                        </span>
+                    </p>
+                    <form method="post" class="d-flex gap-3 justify-content-center">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-primary-custom" style="background:linear-gradient(135deg,#ef4444,#b91c1c)">
+                            <i class="fas fa-trash-alt"></i> Yes, Delete
+                        </button>
+                        <a href="{% url 'manage_facilities' %}" class="btn-outline-custom">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

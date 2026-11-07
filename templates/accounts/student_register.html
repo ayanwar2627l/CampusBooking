@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Student Registration | LPU Campus Booking{% endblock %}
+{% block show_footer %}{% endblock %}
+
+{% block content %}
+<div class="auth-page" style="min-height:100vh;padding:2rem">
+    <div class="auth-container" style="max-width:700px">
+        <div class="auth-logo">
+            <div class="logo-circle"><i class="fas fa-user-graduate"></i></div>
+            <h1 style="font-family:'Poppins',sans-serif;font-weight:800;color:white;font-size:1.2rem;margin-bottom:0.2rem">Student Registration</h1>
+            <p style="color:rgba(255,255,255,0.4);font-size:0.8rem;margin:0">LPU Campus Resource Booking Portal</p>
+        </div>
+
+        <div class="auth-card zoom-in" style="max-width:none">
+            <form method="post" id="regForm">
+                {% csrf_token %}
+
+                <div style="margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,0.08)">
+                    <h5 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.9rem;color:#d4af37;margin:0;display:flex;align-items:center;gap:8px">
+                        <i class="fas fa-user"></i> Personal Information
+                    </h5>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label-custom">First Name *</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}<div style="color:#f87171;font-size:0.78rem;margin-top:0.2rem">{{ form.first_name.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label-custom">Last Name *</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}<div style="color:#f87171;font-size:0.78rem;margin-top:0.2rem">{{ form.last_name.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label-custom">Email Address *</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}<div style="color:#f87171;font-size:0.78rem;margin-top:0.2rem">{{ form.email.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label-custom">Phone Number *</label>
+                        {{ form.phone_number }}
+                        {% if form.phone_number.errors %}<div style="color:#f87171;font-size:0.78rem;margin-top:0.2rem">{{ form.phone_number.errors.0 }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <div style="margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,0.08)">
+                    <h5 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.9rem;color:#d4af37;margin:0;display:flex;align-items:center;gap:8px">
+                        <i class="fas fa-graduation-cap"></i> Academic Information
+                    </h5>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label-custom">Registration Number *</label>
+                        {{ form.registration_number }}
+                        <div style="font-size:0.72rem;color:rgba(255,255,255,0.3);margin-top:0.2rem">Your LPU Reg. No. (e.g., 12345678)</div>
+                        {% if form.registration_number.errors %}<div style="color:#f87171;font-size:0.78rem;margin-top:0.2rem">{{ form.registration_number.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label-custom">Username *</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}<div style="color:#f87171;font-size:0.78rem;margin-top:0.2rem">{{ form.username.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label-custom">Department *</label>
+                        {{ form.department }}
+                        {% if form.department.errors %}<div style="color:#f87171;font-size:0.78rem;margin-top:0.2rem">{{ form.department.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label-custom">Program *</label>
+                        {{ form.program }}
+                        {% if form.program.errors %}<div style="color:#f87171;font-size:0.78rem;margin-top:0.2rem">{{ form.program.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label-custom">Year of Study *</label>
+                        {{ form.year_of_study }}
+                        {% if form.year_of_study.errors %}<div style="color:#f87171;font-size:0.78rem;margin-top:0.2rem">{{ form.year_of_study.errors.0 }}</div>{% endif %}
+                    </div>
+                </div>
+
+                <div style="margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,0.08)">
+                    <h5 style="font-family:'Poppins',sans-serif;font-weight:700;font-size:0.9rem;color:#d4af37;margin:0;display:flex;align-items:center;gap:8px">
+                        <i class="fas fa-lock"></i> Set Password
+                    </h5>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label-custom">Password *</label>
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}<div style="color:#f87171;font-size:0.78rem;margin-top:0.2rem">{{ form.password1.errors.0 }}</div>{% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label-custom">Confirm Password *</label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}<div style="color:#f87171;font-size:0.78rem;margin-top:0.2rem">{{ form.password2.errors.0 }}</div>{% endif %}
+                    </div>
+                </div>
+
+                {% if form.non_field_errors %}
+                <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:0.75rem 1rem;color:#f87171;font-size:0.85rem;margin-bottom:1rem">
+                    <i class="fas fa-exclamation-circle me-1"></i> {{ form.non_field_errors.0 }}
+                </div>
+                {% endif %}
+
+                <!-- Info about approval -->
+                <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:0.75rem 1rem;margin-bottom:1.5rem;display:flex;align-items:start;gap:10px">
+                    <i class="fas fa-info-circle" style="color:#fbbf24;margin-top:2px;flex-shrink:0"></i>
+                    <p style="color:rgba(255,255,255,0.6);font-size:0.82rem;margin:0;line-height:1.5">
+                        Your account will require <strong style="color:#fbbf24">admin approval</strong> before you can make bookings. 
+                        You'll be able to login immediately but booking functionality requires verification.
+                    </p>
+                </div>
+
+                <button type="submit" class="btn-primary-custom w-100 ripple" style="justify-content:center;font-size:1rem;padding:0.85rem">
+                    <i class="fas fa-user-plus"></i> Create Student Account
+                </button>
+
+                <div style="text-align:center;margin-top:1.2rem">
+                    <span style="color:rgba(255,255,255,0.4);font-size:0.85rem">Already registered? </span>
+                    <a href="{% url 'login' %}" style="color:#c8102e;font-size:0.85rem;text-decoration:none;font-weight:600">Sign In</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

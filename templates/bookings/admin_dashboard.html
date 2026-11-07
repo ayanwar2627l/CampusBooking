@@ -1,0 +1,308 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Admin Dashboard | LPU Campus{% endblock %}
+{% block show_footer %}{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+
+    <!-- ── Admin Sidebar ── -->
+    <aside class="sidebar">
+        <div class="sidebar-user">
+            <div class="sidebar-avatar" style="background:linear-gradient(135deg,#c8102e,#d4af37)">
+                <i class="fas fa-shield-alt" style="font-size:1.1rem"></i>
+            </div>
+            <div>
+                <div class="sidebar-user-name">{{ user.get_full_name }}</div>
+                <div class="sidebar-user-role" style="color:#d4af37">
+                    <i class="fas fa-crown me-1"></i> Admin
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-nav-title">Overview</div>
+        <a href="{% url 'admin_dashboard' %}" class="sidebar-link active">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+        </a>
+
+        <div class="sidebar-nav-title">Bookings</div>
+        <a href="{% url 'admin_booking_list' %}" class="sidebar-link">
+            <i class="fas fa-list-alt"></i> All Bookings
+            {% if stats.pending_bookings > 0 %}
+            <span style="margin-left:auto;background:#c8102e;color:white;border-radius:100px;padding:1px 8px;font-size:0.7rem;font-weight:700">{{ stats.pending_bookings }}</span>
+            {% endif %}
+        </a>
+        <a href="{% url 'admin_booking_list' %}?status=pending" class="sidebar-link">
+            <i class="fas fa-clock"></i> Pending Approval
+        </a>
+        <a href="{% url 'admin_booking_list' %}?status=approved" class="sidebar-link">
+            <i class="fas fa-check-circle"></i> Approved
+        </a>
+
+        <div class="sidebar-nav-title">Facilities</div>
+        <a href="{% url 'manage_facilities' %}" class="sidebar-link">
+            <i class="fas fa-cog"></i> Manage Facilities
+        </a>
+        <a href="{% url 'add_facility' %}" class="sidebar-link">
+            <i class="fas fa-plus-circle"></i> Add Facility
+        </a>
+
+        <div class="sidebar-nav-title">System</div>
+        <a href="/admin/" class="sidebar-link">
+            <i class="fas fa-tools"></i> Django Admin
+        </a>
+        <a href="{% url 'logout' %}" class="sidebar-link" style="color:rgba(239,68,68,0.7)">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </aside>
+
+    <!-- ── Admin Content ── -->
+    <div class="dashboard-content">
+
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <div>
+                <h2 style="font-family:'Poppins',sans-serif;font-weight:800;font-size:1.5rem;margin:0">
+                    Admin <span class="gradient-text">Dashboard</span>
+                </h2>
+                <p style="color:rgba(255,255,255,0.4);margin:0;font-size:0.85rem">{% now "l, d F Y H:i" %}</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{% url 'add_facility' %}" class="btn-outline-custom" style="font-size:0.85rem;padding:0.5rem 1rem">
+                    <i class="fas fa-plus"></i> Add Facility
+                </a>
+                <a href="{% url 'admin_booking_list' %}?status=pending" class="btn-primary-custom" style="font-size:0.85rem;padding:0.5rem 1rem">
+                    <i class="fas fa-bell"></i>
+                    Pending ({{ stats.pending_bookings }})
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="row g-3 mb-4">
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="dash-stat-card primary animate-in animate-in-delay-1">
+                    <div class="dash-stat-icon icon-primary">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="dash-stat-value">{{ stats.total_facilities }}</div>
+                    <div class="dash-stat-label">Facilities</div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="dash-stat-card info animate-in animate-in-delay-2">
+                    <div class="dash-stat-icon icon-info">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <div class="dash-stat-value">{{ stats.total_bookings }}</div>
+                    <div class="dash-stat-label">Total Bookings</div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="dash-stat-card warning animate-in animate-in-delay-3">
+                    <div class="dash-stat-icon icon-warning">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="dash-stat-value">{{ stats.pending_bookings }}</div>
+                    <div class="dash-stat-label">Pending</div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="dash-stat-card success animate-in animate-in-delay-4">
+                    <div class="dash-stat-icon icon-success">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <div class="dash-stat-value">{{ stats.approved_bookings }}</div>
+                    <div class="dash-stat-label">Approved</div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="dash-stat-card animate-in animate-in-delay-1" style="border-color:rgba(212,175,55,0.2)">
+                    <div class="dash-stat-icon icon-gold">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="dash-stat-value">{{ stats.total_students }}</div>
+                    <div class="dash-stat-label">Students</div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="dash-stat-card animate-in animate-in-delay-2" style="border-color:rgba(239,68,68,0.2)">
+                    <div class="dash-stat-icon" style="background:rgba(239,68,68,0.15);color:#f87171">
+                        <i class="fas fa-user-clock"></i>
+                    </div>
+                    <div class="dash-stat-value" style="color:{% if stats.pending_approvals > 0 %}#f87171{% else %}white{% endif %}">{{ stats.pending_approvals }}</div>
+                    <div class="dash-stat-label">Awaiting Approval</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Pending Bookings -->
+            <div class="col-lg-8">
+                <div class="content-card mb-4">
+                    <div class="content-card-header">
+                        <h5>
+                            <i class="fas fa-clock" style="color:#f59e0b"></i>
+                            Pending Bookings
+                            {% if stats.pending_bookings > 0 %}
+                            <span style="background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.3);color:#fbbf24;padding:0.15rem 0.6rem;border-radius:100px;font-size:0.7rem;font-weight:700;margin-left:6px">{{ stats.pending_bookings }}</span>
+                            {% endif %}
+                        </h5>
+                        <a href="{% url 'admin_booking_list' %}?status=pending" style="font-size:0.8rem;color:rgba(255,255,255,0.5);text-decoration:none">View All →</a>
+                    </div>
+                    <div style="overflow-x:auto">
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Facility</th>
+                                    <th>Date</th>
+                                    <th>Purpose</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for booking in pending_bookings %}
+                                <tr>
+                                    <td>
+                                        <div style="font-weight:600;color:white">{{ booking.student.get_full_name }}</div>
+                                        <div style="font-size:0.72rem;color:rgba(255,255,255,0.3)">{{ booking.student.registration_number }}</div>
+                                    </td>
+                                    <td>
+                                        <div style="color:white">{{ booking.facility.name }}</div>
+                                        <div style="font-size:0.72rem;color:rgba(255,255,255,0.3)">{{ booking.facility.block }}</div>
+                                    </td>
+                                    <td>
+                                        <div>{{ booking.booking_date|date:"d M" }}</div>
+                                        <div style="font-size:0.72rem;color:rgba(255,255,255,0.4)">{{ booking.start_time|time:"H:i" }}–{{ booking.end_time|time:"H:i" }}</div>
+                                    </td>
+                                    <td>{{ booking.get_purpose_display }}</td>
+                                    <td>
+                                        <a href="{% url 'review_booking' booking.pk %}" class="btn-primary-custom" style="font-size:0.75rem;padding:0.35rem 0.8rem">
+                                            <i class="fas fa-eye"></i> Review
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" style="text-align:center;padding:3rem;color:rgba(255,255,255,0.3)">
+                                        <i class="fas fa-check-double" style="font-size:2rem;display:block;margin-bottom:0.5rem;color:rgba(34,197,94,0.4)"></i>
+                                        All clear! No pending bookings.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Recent All Bookings -->
+                <div class="content-card">
+                    <div class="content-card-header">
+                        <h5><i class="fas fa-history" style="color:#3b82f6"></i> Recent Bookings</h5>
+                        <a href="{% url 'admin_booking_list' %}" style="font-size:0.8rem;color:rgba(255,255,255,0.5);text-decoration:none">View All →</a>
+                    </div>
+                    <div style="overflow-x:auto">
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Facility</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for booking in recent_bookings %}
+                                <tr>
+                                    <td>{{ booking.student.get_full_name }}</td>
+                                    <td>{{ booking.facility.name }}</td>
+                                    <td>{{ booking.booking_date|date:"d M Y" }}</td>
+                                    <td><span class="status-badge status-{{ booking.status }}">{{ booking.get_status_display }}</span></td>
+                                    <td>
+                                        <a href="{% url 'review_booking' booking.pk %}" style="color:#3b82f6;text-decoration:none;font-size:0.8rem">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="5" style="text-align:center;padding:2rem;color:rgba(255,255,255,0.3)">No bookings yet</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="col-lg-4">
+
+                <!-- Pending Student Approvals -->
+                <div class="content-card mb-4">
+                    <div class="content-card-header">
+                        <h5>
+                            <i class="fas fa-user-check" style="color:#22c55e"></i>
+                            Student Approvals
+                            {% if stats.pending_approvals > 0 %}
+                            <span style="background:rgba(239,68,68,0.2);color:#f87171;padding:0.15rem 0.6rem;border-radius:100px;font-size:0.7rem;font-weight:700;margin-left:4px">{{ stats.pending_approvals }}</span>
+                            {% endif %}
+                        </h5>
+                    </div>
+                    <div class="content-card-body">
+                        {% for student in pending_students %}
+                        <div style="padding:0.8rem;background:rgba(255,255,255,0.03);border-radius:10px;margin-bottom:0.75rem;border:1px solid rgba(255,255,255,0.06)">
+                            <div style="display:flex;align-items:center;gap:10px;margin-bottom:0.6rem">
+                                <div style="width:36px;height:36px;background:linear-gradient(135deg,#c8102e,#d4af37);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;flex-shrink:0">
+                                    {{ student.first_name|first|upper }}{{ student.last_name|first|upper }}
+                                </div>
+                                <div>
+                                    <div style="font-weight:600;font-size:0.85rem;color:white">{{ student.get_full_name }}</div>
+                                    <div style="font-size:0.7rem;color:rgba(255,255,255,0.4)">{{ student.registration_number }} | {{ student.department }}</div>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'approve_student' student.pk %}" class="btn-primary-custom" style="font-size:0.75rem;padding:0.35rem 0.8rem;flex:1;justify-content:center">
+                                    <i class="fas fa-check"></i> Approve
+                                </a>
+                                <a href="{% url 'reject_student' student.pk %}" style="background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);padding:0.35rem 0.8rem;border-radius:8px;text-decoration:none;font-size:0.75rem;flex:1;text-align:center;transition:all 0.3s"
+                                   onclick="return confirm('Reject this student?')">
+                                    <i class="fas fa-times"></i> Reject
+                                </a>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div style="text-align:center;padding:1.5rem;color:rgba(255,255,255,0.3);font-size:0.85rem">
+                            <i class="fas fa-users-check" style="font-size:1.5rem;display:block;margin-bottom:0.4rem;color:rgba(34,197,94,0.3)"></i>
+                            No pending student approvals
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Add Announcement -->
+                <div class="content-card">
+                    <div class="content-card-header">
+                        <h5><i class="fas fa-bullhorn" style="color:#d4af37"></i> Post Announcement</h5>
+                    </div>
+                    <div class="content-card-body">
+                        <form method="post" action="{% url 'add_announcement' %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <input type="text" name="title" class="form-control form-control-dark" placeholder="Announcement title" required>
+                            </div>
+                            <div class="mb-3">
+                                <textarea name="content" class="form-control form-control-dark" rows="3" placeholder="Write announcement..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn-gold w-100" style="justify-content:center">
+                                <i class="fas fa-paper-plane"></i> Post Announcement
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

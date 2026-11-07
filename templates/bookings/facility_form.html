@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Facility | Admin | LPU Campus{% endblock %}
+
+{% block content %}
+<div style="background:var(--secondary-dark);min-height:100vh;padding:2rem 0">
+    <div class="container">
+        <div class="page-header">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <span class="section-badge">Admin</span>
+                    <h1 class="text-white mb-1">{{ action }} Facility</h1>
+                </div>
+                <a href="{% url 'manage_facilities' %}" class="btn-outline-custom">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="form-card-dark">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label-custom">Facility Name *</label>
+                                {{ form.name }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label-custom">Capacity *</label>
+                                {{ form.capacity }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Facility Type *</label>
+                                {{ form.facility_type }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Block *</label>
+                                {{ form.block }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label-custom">Floor</label>
+                                {{ form.floor }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label-custom">Room Number</label>
+                                {{ form.room_number }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label-custom">Advance Booking Days</label>
+                                {{ form.booking_advance_days }}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label-custom">Amenities (comma-separated)</label>
+                                {{ form.amenities }}
+                                <div style="font-size:0.75rem;color:rgba(255,255,255,0.3);margin-top:0.3rem">e.g., Projector, AC, Whiteboard, WiFi, Computers</div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label-custom">Description</label>
+                                {{ form.description }}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label-custom">Facility Image</label>
+                                {{ form.image }}
+                                {% if facility and facility.image %}
+                                <div style="margin-top:0.5rem">
+                                    <img src="{{ facility.image.url }}" style="height:80px;border-radius:8px;opacity:0.7"> 
+                                    <span style="font-size:0.75rem;color:rgba(255,255,255,0.4)"> Current image</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12">
+                                <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border-radius:10px;padding:0.8rem 1rem">
+                                    {{ form.is_available }}
+                                    <label class="form-label-custom" style="margin:0;cursor:pointer">Available for Booking</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Error display -->
+                        {% if form.errors %}
+                        <div style="margin-top:1rem;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:1rem">
+                            {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                            <div style="color:#f87171;font-size:0.85rem;margin-bottom:0.3rem">
+                                <i class="fas fa-exclamation-circle me-1"></i>
+                                <strong>{{ field|title }}:</strong> {{ error }}
+                            </div>
+                            {% endfor %}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <div class="d-flex gap-3 justify-content-end mt-4">
+                            <a href="{% url 'manage_facilities' %}" class="btn-outline-custom">Cancel</a>
+                            <button type="submit" class="btn-primary-custom ripple">
+                                <i class="fas fa-save"></i> {{ action }} Facility
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="py-4"></div>
+    </div>
+</div>
+{% endblock %}

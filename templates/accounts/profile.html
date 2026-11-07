@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block title %}My Profile | LPU Campus{% endblock %}
+
+{% block content %}
+<div style="background:var(--secondary-dark);min-height:100vh;padding:2rem 0">
+    <div class="container">
+        <div class="page-header">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <span class="section-badge">Account</span>
+                    <h1 class="text-white mb-1">My Profile</h1>
+                </div>
+                <a href="{% url 'dashboard' %}" class="btn-outline-custom">
+                    <i class="fas fa-arrow-left"></i> Dashboard
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Profile Card -->
+            <div class="col-lg-4">
+                <div class="content-card text-center">
+                    <div class="content-card-body" style="padding:2rem">
+                        <div style="width:90px;height:90px;background:linear-gradient(135deg,#c8102e,#d4af37);border-radius:20px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:2rem;margin-bottom:1rem;overflow:hidden">
+                            {% if user.profile_picture %}
+                                <img src="{{ user.profile_picture.url }}" style="width:100%;height:100%;object-fit:cover">
+                            {% else %}
+                                {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                            {% endif %}
+                        </div>
+                        <h3 style="font-family:'Poppins',sans-serif;font-weight:700;color:white;font-size:1.2rem;margin-bottom:0.3rem">{{ user.get_full_name }}</h3>
+                        <div class="facility-type-badge" style="margin-bottom:0.5rem">
+                            {% if user.is_admin_user %}
+                            <i class="fas fa-shield-alt"></i> Admin
+                            {% else %}
+                            <i class="fas fa-graduation-cap"></i> Student
+                            {% endif %}
+                        </div>
+                        {% if user.registration_number %}
+                        <p style="color:rgba(255,255,255,0.5);font-size:0.85rem;margin:0">Reg: {{ user.registration_number }}</p>
+                        {% endif %}
+                        <div style="margin-top:1.2rem;padding-top:1.2rem;border-top:1px solid rgba(255,255,255,0.06);text-align:left">
+                            <div style="display:flex;justify-content:space-between;padding:0.5rem 0;font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.05)">
+                                <span style="color:rgba(255,255,255,0.4)">Status</span>
+                                <span style="color:{% if user.is_approved %}#4ade80{% else %}#fbbf24{% endif %};font-weight:600">{% if user.is_approved %}✓ Verified{% else %}⏱ Pending{% endif %}</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;padding:0.5rem 0;font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.05)">
+                                <span style="color:rgba(255,255,255,0.4)">Department</span>
+                                <span style="color:white;font-weight:500">{{ user.department|default:"—" }}</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;padding:0.5rem 0;font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.05)">
+                                <span style="color:rgba(255,255,255,0.4)">Program</span>
+                                <span style="color:white;font-weight:500">{{ user.program|default:"—" }}</span>
+                            </div>
+                            <div style="display:flex;justify-content:space-between;padding:0.5rem 0;font-size:0.82rem">
+                                <span style="color:rgba(255,255,255,0.4)">Member Since</span>
+                                <span style="color:white;font-weight:500">{{ user.date_joined|date:"M Y" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Form -->
+            <div class="col-lg-8">
+                <div class="form-card-dark">
+                    <h4 style="font-family:'Poppins',sans-serif;font-weight:700;margin-bottom:1.5rem;display:flex;align-items:center;gap:8px">
+                        <i class="fas fa-user-edit" style="color:#c8102e"></i> Edit Profile
+                    </h4>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label-custom">First Name</label>
+                                {{ form.first_name }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Last Name</label>
+                                {{ form.last_name }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Email</label>
+                                {{ form.email }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Phone Number</label>
+                                {{ form.phone_number }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label-custom">Department</label>
+                                {{ form.department }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label-custom">Program</label>
+                                {{ form.program }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label-custom">Year of Study</label>
+                                {{ form.year_of_study }}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label-custom">Profile Picture</label>
+                                {{ form.profile_picture }}
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end mt-4">
+                            <button type="submit" class="btn-primary-custom ripple">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="py-4"></div>
+    </div>
+</div>
+{% endblock %}

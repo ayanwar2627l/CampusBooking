@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Browse Facilities | LPU Campus Booking{% endblock %}
+{% block nav_facilities %}active{% endblock %}
+
+{% block content %}
+<div style="background:var(--secondary-dark);min-height:100vh;padding-top:2rem">
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <span class="section-badge">All Facilities</span>
+                    <h1 class="text-white mb-1">Campus Facilities</h1>
+                    <p style="color:rgba(255,255,255,0.5);margin:0;font-size:0.9rem">
+                        Browse and book available labs, halls, and rooms
+                    </p>
+                </div>
+                {% if user.is_admin_user %}
+                <a href="{% url 'add_facility' %}" class="btn-primary-custom">
+                    <i class="fas fa-plus"></i> Add Facility
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-lg-4 col-md-6">
+                    <label class="form-label-custom">Search</label>
+                    <div class="position-relative">
+                        <input type="text" name="search" class="form-control" placeholder="Search facilities..."
+                               value="{{ search }}" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:white;border-radius:8px;padding-left:2.5rem">
+                        <i class="fas fa-search position-absolute" style="left:0.9rem;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.3)"></i>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <label class="form-label-custom">Facility Type</label>
+                    <select name="type" class="form-select" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:white;border-radius:8px">
+                        <option value="" style="background:#1a0a15">All Types</option>
+                        {% for value, label in facility_types %}
+                        <option value="{{ value }}" {% if selected_type == value %}selected{% endif %} style="background:#1a0a15">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <label class="form-label-custom">Block</label>
+                    <select name="block" class="form-select" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:white;border-radius:8px">
+                        <option value="" style="background:#1a0a15">All Blocks</option>
+                        {% for value, label in blocks %}
+                        <option value="{{ value }}" {% if selected_block == value %}selected{% endif %} style="background:#1a0a15">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-lg-2 col-md-6 d-flex gap-2">
+                    <button type="submit" class="btn-primary-custom w-100" style="padding:0.55rem 1rem">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                    {% if selected_type or selected_block or search %}
+                    <a href="{% url 'facility_list' %}" class="btn-outline-custom" style="padding:0.55rem 0.8rem;white-space:nowrap">
+                        <i class="fas fa-times"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+
+        <!-- Results count -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <p style="color:rgba(255,255,255,0.4);font-size:0.85rem;margin:0">
+                <span class="gradient-text" style="font-weight:700">{{ facilities.count }}</span> facilities found
+            </p>
+            <div class="d-flex gap-2">
+                <button class="btn btn-sm" style="background:rgba(200,16,46,0.2);color:white;border:1px solid rgba(200,16,46,0.3);border-radius:6px" id="gridView">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button class="btn btn-sm" style="background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.1);border-radius:6px" id="listView">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Facility Grid -->
+        <div class="row g-4" id="facilityGrid">
+            {% for facility in facilities %}
+            <div class="col-lg-4 col-md-6 reveal" style="animation-delay:{{ forloop.counter0 }}00ms">
+                <div class="facility-card h-100">
+                    <div class="facility-card-img-wrapper">
+                        {% if facility.image %}
+                            <img src="{{ facility.image.url }}" alt="{{ facility.name }}" class="facility-card-img">
+                        {% else %}
+                            <div class="facility-card-img-placeholder" style="font-size:{% if facility.facility_type == 'auditorium' %}4rem{% else %}3.5rem{% endif %}">
+                                {% if facility.facility_type == 'computer_lab' %}🖥️
+                                {% elif facility.facility_type == 'mac_lab' %}🍎
+                                {% elif facility.facility_type == 'electronics_lab' %}⚡
+                                {% elif facility.facility_type == 'seminar_hall' %}📣
+                                {% elif facility.facility_type == 'auditorium' %}🎭
+                                {% elif facility.facility_type == 'dsw_room' %}🏛️
+                                {% elif facility.facility_type == 'conference_room' %}👥
+                                {% elif facility.facility_type == 'project_room' %}🔬
+                                {% else %}🏢{% endif %}
+                            </div>
+                        {% endif %}
+                        <!-- Availability Badge -->
+                        <div style="position:absolute;top:10px;right:10px;background:rgba(34,197,94,0.9);backdrop-filter:blur(10px);border-radius:100px;padding:0.2rem 0.7rem;font-size:0.7rem;font-weight:600;color:white;display:flex;align-items:center;gap:4px">
+                            <span style="width:6px;height:6px;background:white;border-radius:50%;display:inline-block"></span>
+                            Available
+                        </div>
+                    </div>
+
+                    <div class="facility-card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div class="facility-type-badge">
+                                <i class="fas fa-circle" style="font-size:0.4rem"></i>
+                                {{ facility.get_facility_type_display }}
+                            </div>
+                        </div>
+
+                        <h3 class="facility-card-title">{{ facility.name }}</h3>
+
+                        <div class="facility-meta">
+                            <span class="facility-meta-item">
+                                <i class="fas fa-map-marker-alt" style="color:#c8102e"></i>
+                                {{ facility.block }}
+                            </span>
+                            <span class="facility-meta-item">
+                                <i class="fas fa-users" style="color:#d4af37"></i>
+                                {{ facility.capacity }} seats
+                            </span>
+                            {% if facility.floor %}
+                            <span class="facility-meta-item">
+                                <i class="fas fa-layer-group" style="color:#3b82f6"></i>
+                                {{ facility.floor }} Floor
+                            </span>
+                            {% endif %}
+                        </div>
+
+                        {% if facility.get_amenities_list %}
+                        <div class="facility-amenity-pills">
+                            {% for amenity in facility.get_amenities_list|slice:":4" %}
+                            <span class="amenity-pill">{{ amenity }}</span>
+                            {% endfor %}
+                            {% if facility.get_amenities_list|length > 4 %}
+                            <span class="amenity-pill" style="background:rgba(200,16,46,0.15);border-color:rgba(200,16,46,0.3);color:#e8304a">
+                                +{{ facility.get_amenities_list|length|add:"-4" }} more
+                            </span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        {% if facility.description %}
+                        <p style="color:rgba(255,255,255,0.4);font-size:0.82rem;margin-bottom:1.2rem;line-height:1.5">
+                            {{ facility.description|truncatechars:80 }}
+                        </p>
+                        {% endif %}
+
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'facility_detail' facility.pk %}" class="btn-outline-custom" style="flex:1;justify-content:center;padding:0.5rem;font-size:0.82rem">
+                                <i class="fas fa-eye"></i> Details
+                            </a>
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'create_booking' facility.pk %}" class="btn-primary-custom" style="flex:1;justify-content:center;padding:0.5rem;font-size:0.82rem">
+                                <i class="fas fa-calendar-plus"></i> Book
+                            </a>
+                            {% else %}
+                            <a href="{% url 'login' %}" class="btn-primary-custom" style="flex:1;justify-content:center;padding:0.5rem;font-size:0.82rem">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <div style="font-size:4rem;margin-bottom:1rem">🔍</div>
+                <h4 style="color:rgba(255,255,255,0.5);font-family:'Poppins',sans-serif">No facilities found</h4>
+                <p style="color:rgba(255,255,255,0.3);font-size:0.9rem">Try adjusting your filters or search terms</p>
+                {% if selected_type or selected_block or search %}
+                <a href="{% url 'facility_list' %}" class="btn-primary-custom mt-3">Clear Filters</a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="py-4"></div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}All Bookings | Admin | LPU Campus{% endblock %}
+{% block show_footer %}{% endblock %}
+
+{% block content %}
+<div style="background:var(--secondary-dark);min-height:100vh;padding:2rem 0">
+    <div class="container-fluid px-4">
+        <div class="page-header">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <span class="section-badge">Admin</span>
+                    <h1 class="text-white mb-1">All Bookings</h1>
+                </div>
+                <a href="{% url 'admin_dashboard' %}" class="btn-outline-custom">
+                    <i class="fas fa-arrow-left"></i> Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-bar">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-lg-3">
+                    <label class="form-label-custom">Search</label>
+                    <input type="text" name="search" class="form-control" placeholder="Student name, reg no, facility..." value="{{ search }}"
+                           style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:white;border-radius:8px">
+                </div>
+                <div class="col-lg-2">
+                    <label class="form-label-custom">Status</label>
+                    <select name="status" class="form-select" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:white;border-radius:8px">
+                        <option value="" style="background:#1a0a15">All Status</option>
+                        {% for value, label in status_choices %}
+                        <option value="{{ value }}" {% if status_filter == value %}selected{% endif %} style="background:#1a0a15">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-lg-3">
+                    <label class="form-label-custom">Facility</label>
+                    <select name="facility" class="form-select" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:white;border-radius:8px">
+                        <option value="" style="background:#1a0a15">All Facilities</option>
+                        {% for f in facilities %}
+                        <option value="{{ f.pk }}" {% if facility_filter == f.pk|stringformat:"s" %}selected{% endif %} style="background:#1a0a15">{{ f.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-lg-2">
+                    <label class="form-label-custom">Date</label>
+                    <input type="date" name="date" class="form-control" value="{{ date_filter }}"
+                           style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:white;border-radius:8px">
+                </div>
+                <div class="col-lg-2 d-flex gap-2">
+                    <button type="submit" class="btn-primary-custom" style="padding:0.55rem 1.2rem">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                    <a href="{% url 'admin_booking_list' %}" class="btn-outline-custom" style="padding:0.55rem 0.8rem">×</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Bookings Table -->
+        <div class="content-card">
+            <div class="content-card-header">
+                <h5><i class="fas fa-list" style="color:#c8102e"></i> Bookings ({{ bookings.count }})</h5>
+            </div>
+            <div style="overflow-x:auto">
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Student</th>
+                            <th>Facility</th>
+                            <th>Date & Time</th>
+                            <th>Purpose</th>
+                            <th>Event</th>
+                            <th>Status</th>
+                            <th>Submitted</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in bookings %}
+                        <tr>
+                            <td style="color:rgba(255,255,255,0.3);font-size:0.8rem">#{{ booking.pk }}</td>
+                            <td>
+                                <div style="font-weight:600;color:white">{{ booking.student.get_full_name }}</div>
+                                <div style="font-size:0.72rem;color:rgba(255,255,255,0.3)">{{ booking.student.registration_number }}</div>
+                            </td>
+                            <td>
+                                <div style="color:white">{{ booking.facility.name }}</div>
+                                <div style="font-size:0.72rem;color:rgba(255,255,255,0.3)">{{ booking.facility.block }}</div>
+                            </td>
+                            <td>
+                                <div style="color:white">{{ booking.booking_date|date:"d M Y" }}</div>
+                                <div style="font-size:0.75rem;color:rgba(255,255,255,0.4)">{{ booking.start_time|time:"H:i" }}–{{ booking.end_time|time:"H:i" }}</div>
+                            </td>
+                            <td style="color:rgba(255,255,255,0.7);font-size:0.82rem">{{ booking.get_purpose_display }}</td>
+                            <td style="color:rgba(255,255,255,0.6);font-size:0.82rem">{{ booking.event_name|default:"—"|truncatechars:20 }}</td>
+                            <td><span class="status-badge status-{{ booking.status }}">{{ booking.get_status_display }}</span></td>
+                            <td style="color:rgba(255,255,255,0.4);font-size:0.78rem">{{ booking.created_at|date:"d M" }}</td>
+                            <td>
+                                <a href="{% url 'review_booking' booking.pk %}" class="btn-primary-custom" style="font-size:0.75rem;padding:0.3rem 0.7rem">
+                                    <i class="fas fa-{% if booking.status == 'pending' %}pen{% else %}eye{% endif %}"></i>
+                                    {% if booking.status == 'pending' %}Review{% else %}View{% endif %}
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" style="text-align:center;padding:3rem;color:rgba(255,255,255,0.3)">
+                                No bookings found matching your filters
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="py-4"></div>
+    </div>
+</div>
+{% endblock %}
